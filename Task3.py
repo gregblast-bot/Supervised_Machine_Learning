@@ -14,7 +14,7 @@ class Task3:
 
 
         # Evaluate learned model on testing data, and print the results.
-	print("*"*50)
+        print("*"*50)
         print("Accuracy\t" + str(0.0) + "\tHamming loss\t" + str(0.0))
         return
 
@@ -24,6 +24,6 @@ class Task3:
 
 
         # Evaluate learned model on testing data, and print the results.
-	print("*"*50)
+        print("*"*50)
         print("Accuracy\t" + str(0.0) + "\tHamming loss\t" + str(0.0))
         return
