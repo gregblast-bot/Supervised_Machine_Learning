@@ -69,7 +69,8 @@ class Features:
         return {
             'edu_school': 1 if 'school' in supports else 0,
             'edu_family': 1 if 'family' in supports else 0,
-            'edu_paid': 1 if 'paid' in supports else 0
+            'edu_paid': 1 if 'paid' in supports else 0,
+            'edu_no': 1 if 'no' in supports else 0
         }
     
 #**************************************** Features ****************************************#

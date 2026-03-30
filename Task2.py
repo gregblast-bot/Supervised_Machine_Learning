@@ -102,37 +102,37 @@ class Task2:
         df_test_final = combined_encoded.iloc[train_len:, :]
 
         # Drop mother's job column (we want to predict this), and use everything else.
-        x_train = df_train_final.drop('Mjob', axis=1)
-        y_train = df_train_final['Mjob']
-        x_test = df_test_final.drop('Mjob', axis=1)
-        y_test = df_test_final['Mjob']
+        x_data_train = df_train_final.drop('Mjob', axis=1)
+        y_labels_train = df_train_final['Mjob']
+        x_data_test = df_test_final.drop('Mjob', axis=1)
+        y_labels_test = df_test_final['Mjob']
 
         # KNN requires label encoding for the target variable.
         target_names = None
         if isinstance(model, KNeighborsClassifier):
             le = LabelEncoder() # Initialize the encoder
-            y_train = le.fit_transform(y_train)
-            y_test = le.transform(y_test)
+            y_labels_train = le.fit_transform(y_labels_train)
+            y_labels_test = le.transform(y_labels_test)
             target_names = le.classes_
 
         # Scale all features (only improves SVR in this task).
         scaler = StandardScaler()
-        x_train_scaled = scaler.fit_transform(x_train)
-        x_test_scaled = scaler.transform(x_test)
+        x_data_train_scaled = scaler.fit_transform(x_data_train)
+        x_data_test_scaled = scaler.transform(x_data_test)
 
         # If a grid is provided, find the best version of the model, otherwise fit the standard model.
         if param_grid:
             grid_search = GridSearchCV(model, param_grid, cv=5, scoring='accuracy', verbose=0)
-            grid_search.fit(x_train_scaled, y_train)
+            grid_search.fit(x_data_train_scaled, y_labels_train)
             model = grid_search.best_estimator_
             print(f"Best Parameters: {grid_search.best_params_}")
         else:
             model = model
-            model.fit(x_train_scaled, y_train)
+            model.fit(x_data_train_scaled, y_labels_train)
 
         # Predict and calculate metrics.
-        y_pred = model.predict(x_test_scaled)
-        overall_accuracy = accuracy_score(y_test, y_pred)
-        class_report = classification_report(y_test, y_pred, target_names=target_names, output_dict=True, zero_division=0)
+        y_labels_pred = model.predict(x_data_test_scaled)
+        overall_accuracy = accuracy_score(y_labels_test, y_labels_pred)
+        class_report = classification_report(y_labels_test, y_labels_pred, target_names=target_names, output_dict=True, zero_division=0)
 
         return overall_accuracy, class_report

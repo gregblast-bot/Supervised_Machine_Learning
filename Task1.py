@@ -64,28 +64,28 @@ class Task1:
         df_test_final = combined_encoded.iloc[train_len:, :]
 
         # Drop final grade column (we want to predict this), and use everything else.
-        x_train = df_train_final.drop('G3', axis=1)
-        y_train = df_train_final['G3']
-        x_test = df_test_final.drop('G3', axis=1)
-        y_test = df_test_final['G3']
+        x_data_train = df_train_final.drop('G3', axis=1)
+        y_labels_train = df_train_final['G3']
+        x_data_test = df_test_final.drop('G3', axis=1)
+        y_labels_test = df_test_final['G3']
 
         # Scale all features (only improves SVR in this task).
         scaler = StandardScaler()
-        x_train_scaled = scaler.fit_transform(x_train)
-        x_test_scaled = scaler.transform(x_test)
+        x_data_train_scaled = scaler.fit_transform(x_data_train)
+        x_data_test_scaled = scaler.transform(x_data_test)
 
         # If a grid is provided, find the best version of the model, otherwise fit the standard model.
         if param_grid:
             grid_search = GridSearchCV(model, param_grid, cv=5, scoring='neg_mean_squared_error', verbose=0)
-            grid_search.fit(x_train_scaled, y_train)
+            grid_search.fit(x_data_train_scaled, y_labels_train)
             model = grid_search.best_estimator_
             print(f"Best Parameters: {grid_search.best_params_}")
         else:
             model = model
-            model.fit(x_train_scaled, y_train)
+            model.fit(x_data_train_scaled, y_labels_train)
 
         # Predict and calculate error.
-        y_pred = model.predict(x_test_scaled)
-        mse = mean_squared_error(y_test, y_pred)
+        y_labels_pred = model.predict(x_data_test_scaled)
+        mse = mean_squared_error(y_labels_test, y_labels_pred)
 
         return mse
