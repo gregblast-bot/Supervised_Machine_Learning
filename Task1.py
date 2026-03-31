@@ -76,7 +76,7 @@ class Task1:
 
         # If a grid is provided, find the best version of the model, otherwise fit the standard model.
         if param_grid:
-            grid_search = GridSearchCV(model, param_grid, cv=5, scoring='neg_mean_squared_error', verbose=0)
+            grid_search = GridSearchCV(model, param_grid, cv=10, scoring='neg_mean_squared_error', verbose=0) # cv=10 for 10-fold-cross-validation.
             grid_search.fit(x_data_train_scaled, y_labels_train)
             model = grid_search.best_estimator_
             print(f"Best Parameters: {grid_search.best_params_}")

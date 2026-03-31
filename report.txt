@@ -1,0 +1,203 @@
+1. Output (Copy the output of the main function):
+******************************************************************************************************************************************************
+================Task 1================
+Model 1: Linear Regression
+**************************************************
+Mean squared error      23.4586
+--------------------
+Model 2: Support Vector Regression
+Best Parameters: {'C': 2, 'epsilon': 0.1, 'gamma': 'auto', 'kernel': 'rbf'}
+**************************************************
+Mean squared error      22.5381
+================Task 2================
+Model 1: Decision Tree
+Best Parameters: {'class_weight': 'balanced', 'max_depth': 15, 'max_features': 'sqrt', 'min_samples_leaf': 1, 'min_samples_split': 2, 'random_state': 42}
+**************************************************
+Accuracy        0.34375 Macro_F1        0.2412  Macro_Precision 0.4099  Macro_Recall    0.2468
+**************************************************
+Category        teacher F1      0.1667  Precision       1.0000  Recall  0.0909
+**************************************************
+Category        health  F1      0.0000  Precision       0.0000  Recall  0.0000
+**************************************************
+Category        services        F1      0.1905  Precision       0.2857  Recall  0.1429
+**************************************************
+Category        at_home F1      0.3784  Precision       0.3889  Recall  0.3684
+**************************************************
+Category        other   F1      0.4706  Precision       0.3750  Recall  0.6316
+--------------------
+Model 2: Nearest Neighbors
+Best Parameters: {'leaf_size': 20, 'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'distance'}
+**************************************************
+Accuracy        0.328125        Macro_F1        0.2340  Macro_Precision 0.3815  Macro_Recall    0.2401
+**************************************************
+Category        teacher F1      0.3077  Precision       1.0000  Recall  0.1818
+**************************************************
+Category        health  F1      0.0000  Precision       0.0000  Recall  0.0000
+**************************************************
+Category        services        F1      0.1000  Precision       0.1667  Recall  0.0714
+**************************************************
+Category        at_home F1      0.3750  Precision       0.4615  Recall  0.3158
+**************************************************
+Category        other   F1      0.3871  Precision       0.2791  Recall  0.6316
+================Task 3================
+Model 1: Logistic Regression
+Best Parameters: {'estimator__C': 0.1, 'estimator__penalty': 'l1', 'estimator__solver': 'liblinear'}
+
+Distribution of tags per student:
+1 Tag(s): 513 students
+2 Tag(s): 68 students
+3 Tag(s): 4 students
+Students with more than one support tag: 72
+**************************************************
+Accuracy        0.3594  Hamming loss    0.2969
+--------------------
+Model 2: Support Vector Machine
+Best Parameters: {'estimator__C': 1, 'estimator__gamma': 0.1, 'estimator__kernel': 'rbf'}
+
+Distribution of tags per student:
+1 Tag(s): 513 students
+2 Tag(s): 68 students
+3 Tag(s): 4 students
+Students with more than one support tag: 72
+**************************************************
+Accuracy        0.3125  Hamming loss    0.3242
+******************************************************************************************************************************************************
+
+******************************************************************************************************************************************************
+Summary of output:
+
+Task 1: Predict student final grading with regression models.
+
+Best Model: Support Vector Regression (SVR)
+
+Results: MSE 22.5381
+
+Summary: SVR outperformed Linear Regression. The use of the radial basis function (RBF) kernel allowed the model to capture non-linear patterns in the student data, resulting in a lower error rate.
+
+Task 2: Predict the student mother’s job with the classification model.
+
+Best Model: Decision Tree
+
+Results: Accuracy 0.3438
+
+Summary: This task proved difficult due to class imbalance (e.g. 'health' workers are uncommon in the dataset). While the Decision Tree had slightly higher overall accuracy, k-nearest neighbors (KNN) showed impressive 1.0000 Precision for the 'teacher' category, meaning it was perfectly accurate whenever it predicted that class.
+
+Task 3: Predict what kind of extra educational support the student may receive.
+
+Best Model: Logistic Regression
+
+Results: Accuracy 0.3594, Hamming Loss 0.2969
+
+Summary: Logistic Regression using the OneVsRestClassifier was the most effective at tagging. Additionally, I added output to show the multi-label nature of the problem.
+******************************************************************************************************************************************************
+
+******************************************************************************************************************************************************
+2. Features (In terms of features, I need to answer the following):
+
+a. What features do I choose to use, and why do I choose them?
+
+I chose to use all features. I thought this generalized approach would work the best. I initially thought about what features may contribute the most to an outcome, but then I decided that it was not useful for me to try and predict what may contribute the most, so I let the data speak for itself. That said, I made sure to exclude the target attribute(s) for each task. 
+
+b. How did I use these features (feature engineering)?
+
+For nominal features (e.g. Mjob, Fjob, reason, guardian, school, sex, address, famsize, Pstatus) I applied one-hot encoding using pd.getdummies. This prevents the model from "assuming" order where none exists. I also used normalization by using the sklearn.preprocessing StandardScaler. This transformed all data to have a mean of 0 and a standard deviation of 1, this is important for models that rely on distance calculations. Lastly, I used binary translation for the complex edusupport attribute. This made task 3 a little easier for me because I did not have to use a label encoder since I already implemented this binary translation!
+
+******************************************************************************************************************************************************
+
+******************************************************************************************************************************************************
+3. Models (For each model, you need to write: The model name., What parameter have you tried, and what corresponding performance on training data?, The final performance of the learned model on the testing data., How long does it take to train the model on training data?)
+******************************************************************************************************************************************************
+Task 1: Predict student final grading with regression models.
+
+Model Name: Linear Regression
+
+Parameters Tried: None
+This served as a baseline with it's straight line relationship between features and grades.
+
+Final Performance: MSE 23.4586
+
+Time: Less than 1s
+ 
+
+Model Name: Support Vector Regression (SVR)
+
+Parameters Tried:         
+param_grid = { 'C': [2, 5, 7, 10],
+               'epsilon': [0.01, 0.05, 0.1], 
+               'kernel': ['rbf', 'poly', 'sigmoid'],
+               'gamma': ['scale', 'auto']
+	     }
+
+Best Parameters: {'C': 2, 'epsilon': 0.1, 'gamma': 'auto', 'kernel': 'rbf'}
+
+These parameters successfully found a non-linear relationships, improving accuracy over the baseline linear regression.
+
+Final Performance: MSE 22.5381
+
+Time: Less than 15s
+******************************************************************************************************************************************************
+Task 2: Predict the student mother’s job with the classification model.
+
+Model Name: Decision Tree
+
+Parameters Tried: { 'max_depth': [5, 10, 15, 20],     
+            	    'min_samples_split': [2, 5, 10],          
+            	    'min_samples_leaf': [1, 2, 4],           
+                    'max_features': ['sqrt', 'log2'],
+                    'class_weight': ['balanced'],
+                    'random_state': [42]
+        	  }
+
+Best Parameters: {'max_depth': 15, 'max_features': 'sqrt', 'class_weight': 'balanced'}
+The balanced parameter helped the decision tree to identify uncommon categories like 'health'.
+
+Final Performance: Accuracy 0.3438
+
+Time: Less than 1s
+
+
+Model Name: Nearest Neighbors
+
+Parameters Tried: { 'n_neighbors': [3, 5, 7, 9, 11], 
+            	    'weights': ['uniform', 'distance'],   
+                    'metric': ['euclidean', 'manhattan'],  
+                    'leaf_size': [20, 30, 40]           
+        	  }
+
+Best Parameters: {'leaf_size': 20, 'metric': 'manhattan', 'n_neighbors': 5, 'weights': 'distance'}
+This model achieved high precision for the 'teacher' category. This may be due to the weights set as distance, giving clustered 'teachers' much higher influence.
+
+Final Performance: Accuracy 0.3281
+
+Time: Less than 5s
+******************************************************************************************************************************************************
+Task 3: Predict what kind of extra educational support the student may receive.
+
+Model Name: Logistic Regression (One-vs-the-Rest)
+
+Parameters Tried: { 'estimator__C': [0.1, 1, 10, 100],          
+            	    'estimator__penalty': ['l1', 'l2'],          
+            	    'estimator__solver': ['liblinear', 'saga']   
+        	  }
+
+Best Parameters: {'C': 0.1, 'penalty': 'l1', 'solver': 'liblinear'}
+The L1 penalty performed automatic feature selection, resulting in the lowest error rate across all labels.
+
+Final Performance: Accuracy 0.3594, Hamming Loss 0.2969
+
+Time: Less than 1s
+
+
+Model Name: Support Vector Machine (One-vs-the-Rest)
+
+Parameters Tried: { 'estimator__C': [0.1, 1, 10, 100],          
+            	    'estimator__kernel': ['linear', 'rbf'],      
+            	    'estimator__gamma': ['scale', 'auto', 0.1] 
+        	  }
+
+Best Parameters: {'C': 1, 'gamma': 0.1, 'kernel': 'rbf'}
+This SVM was less effective than logistic regression, unlike in task 1.
+
+Final Performance: Accuracy 0.3125, Hamming Loss 0.3242
+
+Time: Less than 1min (This took the longest amount of compute!)
